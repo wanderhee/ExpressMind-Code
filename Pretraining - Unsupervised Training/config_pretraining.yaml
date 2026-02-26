@@ -1,0 +1,71 @@
+#  基础模型无监督预训练
+model:
+  model_name_or_path: "/home/ubuntu1/wangzihe/ExpressMind" 
+
+  use_flash_attention: true
+  load_in_8bit: false
+  load_in_4bit: false
+  max_length: 2048
+
+
+training:
+  output_dir: "./output_pretraining"
+  num_train_epochs: 200
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 32
+  learning_rate: 5.0e-6
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  warmup_steps: 100
+  save_strategy: "steps"
+  save_steps: 500
+  save_total_limit: 3
+  logging_steps: 10
+  evaluation_strategy: "steps" 
+  eval_steps: 500
+  gradient_checkpointing: true
+
+  fp16: false
+  bf16: true
+
+  deepspeed: null
+
+# 微调时采用
+# lora:
+  #enabled: false
+  #r: 128
+  #lora_alpha: 32
+  #lora_dropout: 0.05
+  #target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  #bias: "none"
+  #task_type: "CAUSAL_LM"
+
+# 数据配置及存储
+data:
+  pdf_dir: "./数据pdf"
+  processed_data_dir: "./processed_data"
+  train_split: 0.9
+  clean_text: true
+  min_text_length: 50
+  chunk_size: 1024
+  chunk_overlap: 128
+
+# GPU配置
+gpu:
+  use_all_gpus: false  
+  
+  device_ids: [1, 2, 3, 4, 5]
+ 
+  distributed: true
+
+# 简单日志配置
+logging:
+  use_wandb: true
+  wandb_project: "ExpressMind-pdf-training"
+  wandb_run_name: null
+  # 是否使用tensorboard
+  use_tensorboard: false
+  tensorboard_dir: "./logs"
+  # 指标保存文件
+  metrics_file: "./output_pretraining/training_metrics.json"
+
